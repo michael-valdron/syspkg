@@ -20,6 +20,7 @@ import (
 	// "github.com/rs/zerolog/log"
 
 	"github.com/bluet/syspkg/manager"
+	"github.com/bluet/syspkg/osinfo"
 )
 
 var pm string = "flatpak"
@@ -48,7 +49,15 @@ type PackageManager struct{}
 
 // IsAvailable checks if the Flatpak package manager is available on the system.
 func (a *PackageManager) IsAvailable() bool {
-	_, err := exec.LookPath(pm)
+	osInfo, err := osinfo.GetOSInfo()
+
+	if err != nil {
+		return false
+	} else if osInfo.Name != "linux" {
+		return false
+	}
+
+	_, err = exec.LookPath(pm)
 	return err == nil
 }
 

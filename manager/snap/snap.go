@@ -21,6 +21,7 @@ import (
 	"os/exec"
 
 	"github.com/bluet/syspkg/manager"
+	"github.com/bluet/syspkg/osinfo"
 )
 
 var pm string = "snap"
@@ -45,7 +46,15 @@ type PackageManager struct{}
 
 // IsAvailable checks if the snap package manager is available on the system.
 func (a *PackageManager) IsAvailable() bool {
-	_, err := exec.LookPath(pm)
+	osInfo, err := osinfo.GetOSInfo()
+
+	if err != nil {
+		return false
+	} else if osInfo.Name != "linux" {
+		return false
+	}
+
+	_, err = exec.LookPath(pm)
 	return err == nil
 }
 
